@@ -13,7 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public abstract class UserMapper {
 
-    public static final UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);;
+    public static final UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     public abstract UserResponse convert(User user);
 
