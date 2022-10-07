@@ -1,6 +1,7 @@
 package br.com.apiforum.controller;
 
 import br.com.apiforum.domain.User;
+import br.com.apiforum.mappers.UserMapper;
 import br.com.apiforum.request.user.UserPostRequestBody;
 import br.com.apiforum.request.user.UserPutRequestBody;
 import br.com.apiforum.request.user.UserResponse;
@@ -21,30 +22,32 @@ import java.util.List;
 @RequestMapping("/users")
 @Log4j2
 @RequiredArgsConstructor
-public class UserController {
+public class UserController extends BaseController {
     private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAll() {
-        return ResponseEntity.ok(userService.findAll());
+        List<UserResponse> response = userService.findAll();
+        return ok(response);
     }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<?> findById(@PathVariable long id) {
-        return ResponseEntity.ok(userService.findByIdOrThrowBadRequestException(id));
+    public ResponseEntity<UserResponse> findById(@PathVariable long id) {
+        UserResponse responseById = userService.findByIdOrThrowBadRequestException(id);
+        return ok(responseById);
     }
 
     @Transactional
     @PostMapping
-    public ResponseEntity<User> save(@RequestBody @Valid UserPostRequestBody userPostRequestBody) {
-        return new ResponseEntity<>(userService.save(userPostRequestBody), HttpStatus.CREATED);
+    public ResponseEntity<UserResponse> save(@RequestBody @Valid UserPostRequestBody userPostRequestBody) {
+        User user = userService.save(userPostRequestBody);
+        return created(UserMapper.INSTANCE.convert(user));
     }
 
     @Transactional
     @PutMapping
-    public ResponseEntity<User> replace(@RequestBody @Valid UserPutRequestBody userPutRequestBody) {
-        userService.replace(userPutRequestBody);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<UserResponse> replace(@RequestBody @Valid UserPutRequestBody userPutRequestBody) {
+        return noContent(UserMapper.INSTANCE.convert(userService.replace(userPutRequestBody)));
     }
 
     @DeleteMapping(path = "/{id}")
@@ -54,6 +57,6 @@ public class UserController {
     })
     public ResponseEntity<Void> delete(@PathVariable long id) {
         userService.delete(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return noContent();
     }
 }

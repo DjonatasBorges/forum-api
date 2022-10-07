@@ -9,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @SuperBuilder
@@ -30,16 +32,12 @@ public class Topic {
     @Enumerated(EnumType.STRING)
     private StatusTopic status = StatusTopic.NOT_ANSWERED;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @MapsId("authorId")
-//    @JoinColumn(name = "ID_AUTHOR")
-//    private User author;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @MapsId("courseId")
-//    @JoinColumn(name = "ID_COURSE")
-//    private Course course;
-//
-//    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL)
-//    private List<Answer> answer = new ArrayList<>();
+    @ManyToOne
+    private User author;
+
+    @ManyToOne
+    private Course course;
+
+    @OneToMany
+    private List<Answer> answer = new ArrayList<>();
 }
